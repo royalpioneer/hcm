@@ -13,6 +13,7 @@ type Field = {
   edit?: boolean;
   prop?: string;
   tipsContent?: string;
+  type?: string;
   render?: (cell: string | boolean) => void;
 };
 

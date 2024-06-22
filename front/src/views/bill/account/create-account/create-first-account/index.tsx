@@ -51,7 +51,10 @@ export default defineComponent({
         prev[key] = value;
         return prev;
       }, {});
-      await billStore.root_accounts_add(formModel);
+      await billStore.root_accounts_add({
+        ...formModel,
+        email: `${formModel.email}@tencent.com`,
+      });
       Message({
         message: '一级账号录入成功',
         theme: 'success',

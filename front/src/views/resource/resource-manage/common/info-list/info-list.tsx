@@ -20,6 +20,7 @@ type Field = {
   type?: string;
   prop?: string;
   tipsContent?: string;
+  type?: string;
   txtBtn?: (cell: string) => void;
   render?: (cell: string) => void;
 };
@@ -97,6 +98,7 @@ export default defineComponent({
     const renderEditTxt = (field: Field) => (
       <RenderDetailEdit
         modelValue={field.value}
+        fromType={field.type}
         needValidate={false}
         fromKey={field.prop}
         onChange={this.handleblur}></RenderDetailEdit>

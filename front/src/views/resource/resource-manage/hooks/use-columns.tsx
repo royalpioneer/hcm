@@ -1817,11 +1817,12 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     {
       label: '主负责人',
       field: 'managers',
+      render: ({ cell }: any) => cell.join(','),
     },
-    {
-      label: '组织架构',
-      field: 'dept_id',
-    },
+    // {
+    //   label: '组织架构',
+    //   field: 'dept_id',
+    // },
   ];
 
   const secondaryAccountColumns = [
@@ -1844,6 +1845,7 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     {
       label: '主负责人',
       field: 'managers',
+      render: ({ cell }: any) => cell.join(','),
     },
     {
       label: '运营产品',

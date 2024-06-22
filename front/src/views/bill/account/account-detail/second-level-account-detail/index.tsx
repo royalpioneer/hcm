@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import './index.scss';
 import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info';
 import useBillStore from '@/store/useBillStore';
@@ -18,60 +18,6 @@ export default defineComponent({
       const { data } = await billStore.main_account_detail(props.accountId);
       detail.value = data;
     };
-    const computedExtension = computed(() => {
-      let extension = [
-        {
-          prop: 'cloud_main_account_name',
-          name: '二级账号名',
-          render: () => detail.value.extension?.cloud_main_account_name,
-        },
-        {
-          prop: 'cloud_main_account_id',
-          name: '二级账号ID',
-          render: () => detail.value.extension?.cloud_main_account_id,
-        },
-      ];
-      switch (detail.value.vendor) {
-        case 'aws':
-        case 'huawei':
-        case 'zenlayer':
-        case 'kaopu':
-          extension = [
-            {
-              prop: 'cloud_main_account_name',
-              name: '二级账号名',
-              render: () => detail.value.extension?.cloud_main_account_name,
-            },
-            {
-              prop: 'cloud_main_account_id',
-              name: '二级账号ID',
-              render: () => detail.value.extension?.cloud_main_account_id,
-            },
-          ];
-          break;
-        case 'gcp':
-          extension = [
-            { prop: 'cloud_project_name', name: '云项目名', render: () => detail.value.extension?.cloud_project_name },
-            { prop: 'cloud_project_id', name: '云项目ID', render: () => detail.value.extension?.cloud_project_id },
-          ];
-          break;
-        case 'azure':
-          extension = [
-            {
-              prop: 'cloud_subscription_name',
-              name: '订阅名',
-              render: () => detail.value.extension?.cloud_subscription_name,
-            },
-            {
-              prop: 'cloud_subscription_id',
-              name: '订阅ID',
-              render: () => detail.value.extension?.cloud_subscription_id,
-            },
-          ];
-          break;
-      }
-      return extension;
-    });
     watch(
       () => props.accountId,
       () => {
@@ -82,12 +28,17 @@ export default defineComponent({
         deep: true,
       },
     );
-    const handleUpdate = async () => {
-      await billStore.update_main_account(detail.value);
+    const handleUpdate = async (val) => {
+      await billStore.update_main_account({
+        id: props.accountId,
+        ...detail.value,
+        ...val,
+      });
       Message({
         message: '更新成功',
         theme: 'success',
       });
+      getDetail();
     };
     return () => (
       <div class={'account-detail-wrapper'}>
@@ -102,24 +53,24 @@ export default defineComponent({
             { prop: 'id', name: '二级帐号ID' },
             { prop: 'cloud_id', name: '云账号id' },
             { prop: 'site', name: '站点类型' },
-            { prop: 'email', name: '帐号邮箱' },
-            { prop: 'managers', name: '主负责人', edit: true },
-            { prop: 'bak_managers', name: '备份负责人', edit: true },
+            { prop: 'email', name: '帐号邮箱', edit: true },
+            { prop: 'managers', name: '主负责人', edit: true, type: 'member' },
+            { prop: 'bak_managers', name: '备份负责人', edit: true, type: 'member' },
             { prop: 'business_type', name: '业务类型' },
-            { prop: 'dept_id', name: '组织架构', edit: true },
+            // { prop: 'dept_id', name: '组织架构', edit: true },
             { prop: 'op_product_id', name: '运营产品' },
             { prop: 'status', name: '账号状态' },
-            { prop: 'memo', name: '备注' },
+            { prop: 'memo', name: '备注', edit: true },
           ]}
         />
-        <p class={'sub-title'}>
+        {/* <p class={'sub-title'}>
           API 密钥
           <span class={'edit-icon'}>
             <i class={'hcm-icon bkhcm-icon-bianji mr6'} />
             编辑
           </span>
         </p>
-        <DetailInfo detail={detail.value} fields={computedExtension.value} wide />
+        <DetailInfo detail={detail.value} fields={computedExtension.value} wide /> */}
       </div>
     );
   },
