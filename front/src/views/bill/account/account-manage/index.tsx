@@ -61,7 +61,7 @@ export default defineComponent({
         columns: [
           {
             label: '二级帐号ID',
-            field: 'id',
+            field: 'cloud_id',
             render: ({ data }: any) => (
               <Button
                 text
@@ -70,7 +70,7 @@ export default defineComponent({
                   curSecondLeveleAccount.value = data;
                   isSecondLevelSideSliderShow.value = true;
                 }}>
-                {data.id}
+                {data.cloud_id}
               </Button>
             ),
           },

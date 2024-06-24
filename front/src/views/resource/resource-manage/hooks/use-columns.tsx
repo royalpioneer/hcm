@@ -1793,7 +1793,7 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
   const firstAccountColumns = [
     {
       label: '一级帐号ID',
-      field: 'id',
+      field: 'cloud_id',
     },
     {
       label: '云厂商',
@@ -1812,6 +1812,10 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     //   label: '组织架构',
     //   field: 'dept_id',
     // },
+    {
+      label: '备注',
+      field: 'memo',
+    },
   ];
 
   const secondaryAccountColumns = [
@@ -1839,6 +1843,10 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     {
       label: '运营产品',
       field: 'op_product_id',
+    },
+    {
+      label: '备注',
+      field: 'memo',
     },
   ];
 
