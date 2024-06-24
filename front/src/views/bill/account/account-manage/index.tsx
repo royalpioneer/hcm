@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import './index.scss';
 import { Button, Tab } from 'bkui-vue';
 import { BkTabPanel } from 'bkui-vue/lib/tab';
@@ -9,11 +9,14 @@ import CommonSideslider from '@/components/common-sideslider';
 import FirstLevelAccountDetail from '../account-detail/first-level-account-detail';
 import SecondLevelAccountDetail from '../account-detail/second-level-account-detail';
 import { useRoute, useRouter } from 'vue-router';
+import { useOperationProducts } from '@/hooks/useOperationProducts';
 
 export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
+
+    const { getTranslatorMap } = useOperationProducts();
 
     const accountLevel = ref(AccountLevelEnum.FirstLevel);
     const { columns: firstAccountColumns } = useColumns(AccountLevelEnum.FirstLevel);
@@ -52,6 +55,7 @@ export default defineComponent({
       },
       requestOption: {
         type: 'account/root_accounts',
+        sortOption: { sort: 'created_at', order: 'DESC' },
         dataPath: 'data.details',
       },
     });
@@ -61,7 +65,7 @@ export default defineComponent({
         columns: [
           {
             label: '二级帐号ID',
-            field: 'id',
+            field: 'cloud_id',
             render: ({ data }: any) => (
               <Button
                 text
@@ -70,7 +74,7 @@ export default defineComponent({
                   curSecondLeveleAccount.value = data;
                   isSecondLevelSideSliderShow.value = true;
                 }}>
-                {data.id}
+                {data.cloud_id}
               </Button>
             ),
           },
@@ -83,6 +87,20 @@ export default defineComponent({
       requestOption: {
         type: 'account/main_accounts',
         dataPath: 'data.details',
+        sortOption: { sort: 'created_at', order: 'DESC' },
+        async resolveDataListCb(dataList: any) {
+          if (!dataList.length) return;
+          const ids = dataList.map((item: { op_product_id: number }) => item.op_product_id);
+          const map = await getTranslatorMap(ids);
+          opTranslatorMap.value = new Map();
+          return dataList.map((data: { op_product_id: number }) => {
+            const { op_product_id } = data;
+            return {
+              ...data,
+              op_product_id: map.get(op_product_id),
+            };
+          });
+        },
       },
     });
 

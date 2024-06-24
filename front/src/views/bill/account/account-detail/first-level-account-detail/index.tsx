@@ -4,6 +4,7 @@ import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info
 import useBillStore from '@/store/useBillStore';
 import { Message } from 'bkui-vue';
 import { timeFormatter } from '@/common/util';
+import { BILL_VENDORS_MAP } from '../../account-manage/constants';
 
 export default defineComponent({
   props: {
@@ -156,7 +157,7 @@ export default defineComponent({
           fields={[
             { prop: 'id', name: 'id' },
             { prop: 'name', name: '名字', edit: true },
-            { prop: 'vendor', name: '云厂商' },
+            { prop: 'vendor', name: '云厂商', render: () => BILL_VENDORS_MAP[detail.value.vendor] },
             { prop: 'cloud_id', name: '云ID' },
             { prop: 'email', name: '邮箱', edit: true },
             { prop: 'managers', name: '负责人', edit: true, type: 'member' },

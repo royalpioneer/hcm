@@ -3,6 +3,8 @@ import './index.scss';
 import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info';
 import useBillStore from '@/store/useBillStore';
 import { Message } from 'bkui-vue';
+import { BILL_VENDORS_MAP } from '../../account-manage/constants';
+import { SITE_TYPE_MAP } from '@/common/constant';
 
 export default defineComponent({
   props: {
@@ -48,11 +50,11 @@ export default defineComponent({
           wide
           onChange={handleUpdate}
           fields={[
-            { prop: 'vendor', name: '云厂商' },
+            { prop: 'vendor', name: '云厂商', render: () => BILL_VENDORS_MAP[detail.value.vendor] },
             { prop: 'parent_account_id', name: '一级账号ID' },
             { prop: 'id', name: '二级帐号ID' },
             { prop: 'cloud_id', name: '云账号id' },
-            { prop: 'site', name: '站点类型' },
+            { prop: 'site', name: '站点类型', render: () => SITE_TYPE_MAP[detail.value.site] },
             { prop: 'email', name: '帐号邮箱', edit: true },
             { prop: 'managers', name: '主负责人', edit: true, type: 'member' },
             { prop: 'bak_managers', name: '备份负责人', edit: true, type: 'member' },

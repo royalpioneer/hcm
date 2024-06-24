@@ -1,7 +1,6 @@
 import { PropType, computed, defineComponent, onMounted, ref } from 'vue';
 import './index.scss';
 import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info';
-import { useBusinessMapStore } from '@/store/useBusinessMap';
 import { useStatus } from './useStatus';
 import { Close, Spinner, Success } from 'bkui-vue/lib/icon';
 import { Button, Exception, Form, Input, Message, Select } from 'bkui-vue';
@@ -48,7 +47,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const businessMapStore = useBusinessMapStore();
     const info = computed(() => JSON.parse(props.detail.content));
     const statusMap = useStatus(props.detail.delivery_detail);
     const isDialogShow = ref(false);
@@ -131,14 +129,18 @@ export default defineComponent({
                 prop: 'vendor',
                 name: '云厂商',
               },
-              {
-                prop: 'bk_biz_id',
-                name: '业务',
-                render: () => businessMapStore.businessMap.get(info.value.bk_biz_id) || info.value.bk_biz_id || '--',
-              },
+              // {
+              //   prop: 'bk_biz_id',
+              //   name: '业务',
+              //   render: () => businessMapStore.businessMap.get(info.value.bk_biz_id) || info.value.bk_biz_id || '--',
+              // },
               {
                 prop: 'id',
                 name: '一级账号ID',
+              },
+              {
+                prop: 'email',
+                name: '邮箱',
               },
               {
                 prop: 'managers',
@@ -152,6 +154,14 @@ export default defineComponent({
                 prop: 'op_product_id',
                 name: '运营产品',
               },
+              {
+                prop: 'site',
+                name: '站点类型',
+              },
+              // {
+              //   prop: 'memo',
+              //   name: '申请用途',
+              // },
             ]}
           />
         </div>
@@ -175,9 +185,11 @@ export default defineComponent({
             />
           ) : (
             <Exception scene='part' type='empty' description='当前账号未创建'>
-              <Button text theme='primary' class={'create-account-btn'} onClick={() => (isDialogShow.value = true)}>
-                录入账号
-              </Button>
+              {rootAccountList.value.length > 0 && props.detail.status === 'delivering' && (
+                <Button text theme='primary' class={'create-account-btn'} onClick={() => (isDialogShow.value = true)}>
+                  录入账号
+                </Button>
+              )}
             </Exception>
           )}
         </div>

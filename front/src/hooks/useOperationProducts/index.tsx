@@ -1,23 +1,26 @@
 import useBillStore from '@/store/useBillStore';
 import { Select } from 'bkui-vue';
 import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
+import './index.scss';
 const { Option } = Select;
 
 export const useOperationProducts = () => {
   const billStore = useBillStore();
   const list = ref([]);
   const pagination = reactive({
-    limit: 50,
+    limit: 200,
     start: 0,
   });
   const allCounts = ref(0);
 
-  const getList = async () => {
+  const getList = async (op_product_name?: string, op_product_ids?: number[]) => {
     const [detailRes, countRes] = await Promise.all(
       [false, true].map((isCount) =>
         billStore.list_operation_products({
+          op_product_name,
+          op_product_ids,
           page: {
-            ...pagination,
+            start: op_product_name === undefined && op_product_ids === undefined? pagination.start : 0,
             limit: isCount ? 0 : pagination.limit,
             count: isCount,
           },
@@ -26,7 +29,17 @@ export const useOperationProducts = () => {
     );
     allCounts.value = countRes.data.count;
     list.value = detailRes.data.details;
+    return list.value;
   };
+
+  const getTranslatorMap = async (ids: number[]) => {
+    const map = new Map();
+    const dataList = await getList(undefined, ids);
+    for(const {op_product_id, op_product_name} of dataList) {
+      map.set(op_product_id, op_product_name);
+    }
+    return map;
+  }
 
   onMounted(() => {
     getList();
@@ -35,6 +48,7 @@ export const useOperationProducts = () => {
   const OperationProductsSelector = defineComponent({
     props: {
       modelValue: String,
+      isShowManagers: Boolean,
     },
     setup(props, { emit }) {
       const selectedVal = ref(props.modelValue);
@@ -53,6 +67,7 @@ export const useOperationProducts = () => {
             v-model={selectedVal.value}
             scrollLoading={isScrollLoading.value}
             filterable
+            remoteMethod={(val) => getList(val)}
             onScroll-end={async () => {
               if (list.value.length >= allCounts.value || isScrollLoading.value) return;
               isScrollLoading.value = true;
@@ -67,8 +82,15 @@ export const useOperationProducts = () => {
               list.value.push(...data.details);
               isScrollLoading.value = false;
             }}>
-            {list.value.map(({ op_product_name, op_product_id }) => (
-              <Option name={op_product_name} id={op_product_id} key={op_product_id} />
+            {list.value.map(({ op_product_name, op_product_id, op_product_managers }) => (
+              <Option name={op_product_name} id={op_product_id} key={op_product_id}>
+                <span>
+                  {op_product_name}
+                  {props.isShowManagers && (
+                    <span class={'op-production-memo-info'}>&nbsp;({`负责人: ${op_product_managers}`})</span>
+                  )}
+                </span>
+              </Option>
             ))}
           </Select>
         </div>
@@ -78,5 +100,6 @@ export const useOperationProducts = () => {
 
   return {
     OperationProductsSelector,
+    getTranslatorMap,
   };
 };

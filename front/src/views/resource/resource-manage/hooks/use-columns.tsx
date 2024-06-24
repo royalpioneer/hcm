@@ -30,6 +30,7 @@ import { Spinner } from 'bkui-vue/lib/icon';
 import { APPLICATION_TYPE_MAP } from '@/views/service/apply-list/constants';
 import dayjs from 'dayjs';
 import { BILLS_ROOT_ACCOUNT_SUMMARY_STATE_MAP, BILL_TYPE__MAP_HW, CURRENCY_MAP } from '@/constants';
+import { BILL_VENDORS_MAP, BILL_SITE_TYPES_MAP } from '@/views/bill/account/account-manage/constants';
 
 interface LinkFieldOptions {
   type: string; // 资源类型
@@ -1793,11 +1794,12 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
   const firstAccountColumns = [
     {
       label: '一级帐号ID',
-      field: 'id',
+      field: 'cloud_id',
     },
     {
       label: '云厂商',
       field: 'vendor',
+      render: ({cell}: any) => BILL_VENDORS_MAP[cell] || '--', 
     },
     {
       label: '帐号邮箱',
@@ -1812,9 +1814,17 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     //   label: '组织架构',
     //   field: 'dept_id',
     // },
+    {
+      label: '备注',
+      field: 'memo',
+    },
   ];
 
   const secondaryAccountColumns = [
+    {
+      label: '二级账号名称',
+      field: 'name',
+    },
     {
       label: '所属一级帐号',
       field: 'parent_account_name',
@@ -1822,10 +1832,12 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     {
       label: '云厂商',
       field: 'vendor',
+      render: ({cell}: any) => BILL_VENDORS_MAP[cell] || '--', 
     },
     {
       label: '站点类型',
       field: 'site',
+      render: ({cell}: any) => BILL_SITE_TYPES_MAP[cell],
     },
     {
       label: '帐号邮箱',
@@ -1839,6 +1851,10 @@ export default (type: string, isSimpleShow = false, vendor?: string) => {
     {
       label: '运营产品',
       field: 'op_product_id',
+    },
+    {
+      label: '备注',
+      field: 'memo',
     },
   ];
 
