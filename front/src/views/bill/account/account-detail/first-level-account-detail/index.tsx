@@ -1,10 +1,11 @@
 import { computed, defineComponent, ref, watch } from 'vue';
 import './index.scss';
 import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info';
-import useBillStore from '@/store/useBillStore';
+import useBillStore, { IRootAccountDetail } from '@/store/useBillStore';
 import { Message } from 'bkui-vue';
 import { timeFormatter } from '@/common/util';
 import { BILL_VENDORS_MAP } from '../../account-manage/constants';
+import { SITE_TYPE_MAP } from '@/common/constant';
 
 export default defineComponent({
   props: {
@@ -14,7 +15,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const detail = ref({});
+    const detail = ref<IRootAccountDetail>({});
     const billStore = useBillStore();
     const getDetail = async () => {
       const { data } = await billStore.root_account_detail(props.accountId);
@@ -39,7 +40,7 @@ export default defineComponent({
             { prop: 'cloud_account_id', name: '一级账号ID', render: () => detail.value.extension?.cloud_account_id },
             { prop: 'cloud_iam_username', name: 'IAM用户名', render: () => detail.value.extension?.cloud_iam_username },
             { prop: 'cloud_secret_id', name: '密钥ID', render: () => detail.value.extension?.cloud_secret_id },
-            { prop: 'cloud_secret_key', name: '密钥', render: () => detail.value.extension?.cloud_secret_key },
+            // { prop: 'cloud_secret_key', name: '密钥', render: () => detail.value.extension?.cloud_secret_key },
           ];
           break;
         case 'gcp':
@@ -62,11 +63,11 @@ export default defineComponent({
               name: '服务密钥ID',
               render: () => detail.value.extension?.cloud_service_secret_id,
             },
-            {
-              prop: 'cloud_service_secret_key',
-              name: '服务密钥',
-              render: () => detail.value.extension?.cloud_service_secret_key,
-            },
+            // {
+            //   prop: 'cloud_service_secret_key',
+            //   name: '服务密钥',
+            //   render: () => detail.value.extension?.cloud_service_secret_key,
+            // },
           ];
           break;
         case 'azure':
@@ -98,20 +99,20 @@ export default defineComponent({
               name: '客户端密钥ID',
               render: () => detail.value.extension?.cloud_client_secret_id,
             },
-            {
-              prop: 'cloud_client_secret_key',
-              name: '客户端密钥',
-              render: () => detail.value.extension?.cloud_client_secret_key,
-            },
+            // {
+            //   prop: 'cloud_client_secret_key',
+            //   name: '客户端密钥',
+            //   render: () => detail.value.extension?.cloud_client_secret_key,
+            // },
           ];
           break;
         case 'huawei':
           extension = [
-            {
-              prop: 'cloud_main_account_name',
-              name: '主账号名',
-              render: () => detail.value.extension?.cloud_main_account_name,
-            },
+            // {
+            //   prop: 'cloud_main_account_name',
+            //   name: '主账号名',
+            //   render: () => detail.value.extension?.cloud_main_account_name,
+            // },
             {
               prop: 'cloud_sub_account_id',
               name: '子账号ID',
@@ -123,7 +124,7 @@ export default defineComponent({
               render: () => detail.value.extension?.cloud_sub_account_name,
             },
             { prop: 'cloud_secret_id', name: '密钥ID', render: () => detail.value.extension?.cloud_secret_id },
-            { prop: 'cloud_secret_key', name: '密钥', render: () => detail.value.extension?.cloud_secret_key },
+            // { prop: 'cloud_secret_key', name: '密钥', render: () => detail.value.extension?.cloud_secret_key },
             { prop: 'cloud_iam_user_id', name: 'IAM用户ID', render: () => detail.value.extension?.cloud_iam_user_id },
             { prop: 'cloud_iam_username', name: 'IAM用户名', render: () => detail.value.extension?.cloud_iam_username },
           ];
@@ -138,7 +139,7 @@ export default defineComponent({
 
       return extension;
     });
-    const handleUpdate = async (val) => {
+    const handleUpdate = async (val: any) => {
       await billStore.root_account_update(props.accountId, val);
       Message({
         message: '更新成功',
@@ -162,7 +163,7 @@ export default defineComponent({
             { prop: 'email', name: '邮箱', edit: true },
             { prop: 'managers', name: '负责人', edit: true, type: 'member' },
             { prop: 'bak_managers', name: '备份负责人', edit: true, type: 'member' },
-            { prop: 'site', name: '站点' },
+            { prop: 'site', name: '站点', render: () => SITE_TYPE_MAP[detail.value.site] },
             // { prop: 'dept_id', name: '组织架构ID' },
             { prop: 'memo', name: '备注', edit: true },
             { prop: 'creator', name: '创建者' },

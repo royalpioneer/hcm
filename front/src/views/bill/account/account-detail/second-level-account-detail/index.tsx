@@ -1,10 +1,11 @@
 import { defineComponent, ref, watch } from 'vue';
 import './index.scss';
 import DetailInfo from '@/views/resource/resource-manage/common/info/detail-info';
-import useBillStore from '@/store/useBillStore';
+import useBillStore, { IMainAccountDetail } from '@/store/useBillStore';
 import { Message } from 'bkui-vue';
 import { BILL_VENDORS_MAP } from '../../account-manage/constants';
 import { SITE_TYPE_MAP } from '@/common/constant';
+import { useOperationProducts } from '@/hooks/useOperationProducts';
 
 export default defineComponent({
   props: {
@@ -14,23 +15,26 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const detail = ref({});
+    const detail = ref<IMainAccountDetail>({});
     const billStore = useBillStore();
     const getDetail = async () => {
       const { data } = await billStore.main_account_detail(props.accountId);
       detail.value = data;
     };
+    const translatorMap = ref(new Map());
+    const { getTranslatorMap } = useOperationProducts();
     watch(
       () => props.accountId,
-      () => {
-        getDetail();
+      async () => {
+        await getDetail();
+        translatorMap.value = await getTranslatorMap([detail.value.op_product_id]);
       },
       {
         immediate: true,
         deep: true,
       },
     );
-    const handleUpdate = async (val) => {
+    const handleUpdate = async (val: any) => {
       await billStore.update_main_account({
         id: props.accountId,
         ...detail.value,
@@ -58,10 +62,14 @@ export default defineComponent({
             { prop: 'email', name: '帐号邮箱', edit: true },
             { prop: 'managers', name: '主负责人', edit: true, type: 'member' },
             { prop: 'bak_managers', name: '备份负责人', edit: true, type: 'member' },
-            { prop: 'business_type', name: '业务类型' },
+            // { prop: 'business_type', name: '业务类型' },
             // { prop: 'dept_id', name: '组织架构', edit: true },
-            { prop: 'op_product_id', name: '运营产品' },
-            { prop: 'status', name: '账号状态' },
+            {
+              prop: 'op_product_id',
+              name: '运营产品',
+              render: () => translatorMap.value.get(detail.value.op_product_id) || '--',
+            },
+            // { prop: 'status', name: '账号状态' },
             { prop: 'memo', name: '备注', edit: true },
           ]}
         />

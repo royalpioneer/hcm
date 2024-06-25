@@ -7,6 +7,9 @@ import { Button, Exception, Form, Input, Message, Select } from 'bkui-vue';
 import CommonDialog from '@/components/common-dialog';
 import useBillStore from '@/store/useBillStore';
 import useFormModel from '@/hooks/useFormModel';
+import { BILL_VENDORS_MAP } from '@/views/bill/account/account-manage/constants';
+import { SITE_TYPE_MAP } from '@/common/constant';
+import { useOperationProducts } from '@/hooks/useOperationProducts';
 
 const { FormItem } = Form;
 const { Option } = Select;
@@ -52,6 +55,8 @@ export default defineComponent({
     const isDialogShow = ref(false);
     const rootAccountList = ref([]);
     const billStore = useBillStore();
+    const { getTranslatorMap } = useOperationProducts();
+    const translatorMap = ref(new Map());
     const computedExtension = computed(() => {
       let extension = {}; // aws\gcp
       switch (info.value.vendor) {
@@ -102,6 +107,7 @@ export default defineComponent({
         id: v.id,
         key: v.id,
       }));
+      translatorMap.value = await getTranslatorMap([info.value.op_product_id]);
     });
 
     return () => (
@@ -128,6 +134,7 @@ export default defineComponent({
               {
                 prop: 'vendor',
                 name: '云厂商',
+                render: () => BILL_VENDORS_MAP[info.value.vendor],
               },
               // {
               //   prop: 'bk_biz_id',
@@ -153,10 +160,12 @@ export default defineComponent({
               {
                 prop: 'op_product_id',
                 name: '运营产品',
+                render: () => translatorMap.value.get(info.value.op_product_id) || '--',
               },
               {
                 prop: 'site',
                 name: '站点类型',
+                render: () => SITE_TYPE_MAP[info.value.site],
               },
               // {
               //   prop: 'memo',

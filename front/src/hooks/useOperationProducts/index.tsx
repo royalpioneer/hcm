@@ -20,7 +20,7 @@ export const useOperationProducts = () => {
           op_product_name,
           op_product_ids,
           page: {
-            start: op_product_name === undefined && op_product_ids === undefined? pagination.start : 0,
+            start: op_product_name === undefined && op_product_ids === undefined ? pagination.start : 0,
             limit: isCount ? 0 : pagination.limit,
             count: isCount,
           },
@@ -35,11 +35,11 @@ export const useOperationProducts = () => {
   const getTranslatorMap = async (ids: number[]) => {
     const map = new Map();
     const dataList = await getList(undefined, ids);
-    for(const {op_product_id, op_product_name} of dataList) {
+    for (const { op_product_id, op_product_name } of dataList) {
       map.set(op_product_id, op_product_name);
     }
     return map;
-  }
+  };
 
   onMounted(() => {
     getList();
@@ -49,6 +49,7 @@ export const useOperationProducts = () => {
     props: {
       modelValue: String,
       isShowManagers: Boolean,
+      multiple: Boolean,
     },
     setup(props, { emit }) {
       const selectedVal = ref(props.modelValue);
@@ -67,6 +68,8 @@ export const useOperationProducts = () => {
             v-model={selectedVal.value}
             scrollLoading={isScrollLoading.value}
             filterable
+            multiple={props.multiple}
+            multipleMode={props.multiple ? 'tag' : undefined}
             remoteMethod={(val) => getList(val)}
             onScroll-end={async () => {
               if (list.value.length >= allCounts.value || isScrollLoading.value) return;

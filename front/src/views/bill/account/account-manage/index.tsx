@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import './index.scss';
 import { Button, Tab } from 'bkui-vue';
 import { BkTabPanel } from 'bkui-vue/lib/tab';
@@ -92,7 +92,6 @@ export default defineComponent({
           if (!dataList.length) return;
           const ids = dataList.map((item: { op_product_id: number }) => item.op_product_id);
           const map = await getTranslatorMap(ids);
-          opTranslatorMap.value = new Map();
           return dataList.map((data: { op_product_id: number }) => {
             const { op_product_id } = data;
             return {

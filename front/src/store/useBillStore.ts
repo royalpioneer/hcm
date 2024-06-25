@@ -78,7 +78,7 @@ export default defineStore('billStore', () => {
    * @param id 账号id
    * @returns
    */
-  const main_account_detail = (id: string) => {
+  const main_account_detail = (id: string): Promise<IMainAccountDetailResponse> => {
     return http.get(`${BK_HCM_AJAX_URL_PREFIX}/api/v1/account/main_accounts/${id}`);
   };
 
@@ -378,3 +378,65 @@ interface ZenlayerKaopuCompleteExtension {
 
 // Union Type for all possible complete extensions (单据信息填写)
 export type CompleteExtension = AzureCompleteExtension | HuaweiCompleteExtension | ZenlayerKaopuCompleteExtension;
+
+export interface IMainAccountDetailResponse {
+  data: IMainAccountDetail;
+}
+
+export interface IMainAccountDetail {
+  vendor?: string;
+  parent_account_id?: string;
+  id?: string;
+  cloud_id?: string;
+  site?: string;
+  email?: string;
+  managers?: string;
+  bak_managers?: string;
+  business_type?: string;
+  op_product_id?: number;
+  status?: string;
+  memo?: string;
+}
+
+export interface IRootAccountDetailExtension {
+  cloud_account_id?: string;
+  cloud_iam_username?: string;
+  cloud_secret_id?: string;
+  cloud_secret_key?: string;
+  email?: string;
+  cloud_project_id?: string;
+  cloud_project_name?: string;
+  cloud_service_account_id?: string;
+  cloud_service_account_name?: string;
+  cloud_service_secret_id?: string;
+  cloud_service_secret_key?: string;
+  display_name_name?: string;
+  cloud_tenant_id?: string;
+  cloud_subscription_id?: string;
+  cloud_subscription_name?: string;
+  cloud_application_id?: string;
+  cloud_application_name?: string;
+  cloud_client_secret_id?: string;
+  cloud_client_secret_key?: string;
+  cloud_main_account_name?: string;
+  cloud_sub_account_id?: string;
+  cloud_sub_account_name?: string;
+  cloud_iam_user_id?: string;
+}
+
+export interface IRootAccountDetail {
+  id?: string;
+  name?: string;
+  vendor?: string;
+  cloud_id?: string;
+  email?: string;
+  managers?: string;
+  bak_managers?: string;
+  site?: string;
+  memo?: string;
+  creator?: string;
+  reviser?: string;
+  created_at?: string;
+  updated_at?: string;
+  extension?: IRootAccountDetailExtension;
+}

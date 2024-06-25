@@ -6,12 +6,13 @@ import { Button, DatePicker } from 'bkui-vue';
 import VendorSelector from './vendor-selector';
 import PrimaryAccountSelector from './primary-account-selector';
 import SubAccountSelector from './sub-account-selector';
-import OperationProductSelector from './operation-product-selector';
+// import OperationProductSelector from './operation-product-selector';
 
 import { useI18n } from 'vue-i18n';
 import { VendorEnum } from '@/common/constant';
 import { QueryRuleOPEnum } from '@/typings';
 import dayjs from 'dayjs';
+import { useOperationProducts } from '@/hooks/useOperationProducts';
 
 interface ISearchModal {
   vendor: VendorEnum[];
@@ -26,6 +27,7 @@ export default defineComponent({
   setup(_, { emit, expose }) {
     const { t } = useI18n();
     const route = useRoute();
+    const { OperationProductsSelector } = useOperationProducts();
 
     const getDefaultModal = (): ISearchModal => ({
       vendor: [],
@@ -91,7 +93,7 @@ export default defineComponent({
           )}
           <div>
             <div class={cssModule['search-label']}>{t('运营产品')}</div>
-            <OperationProductSelector v-model={modal.value.product_id} />
+            <OperationProductsSelector v-model={modal.value.product_id} multiple />
           </div>
           {['billDetail', 'billAdjust'].includes(route.name as string) && (
             <div>
